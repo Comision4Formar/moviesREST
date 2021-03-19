@@ -63,9 +63,11 @@ module.exports = {
             length
         })
         .then(result => {
+            console.log(result)
             res.send(result)
         })
         .catch(error => {
+            console.log(error)
             switch (error.name) {
                 case "SequelizeValidationError":
                     let erroresMsg = [];
@@ -90,7 +92,7 @@ module.exports = {
                             validation: erroresValidation
                         }
                     }
-                    return res.status(400).json(response)
+                    return res.status(400).json(error)
                     default:
                         return res.status(500).json({error})
                 }
