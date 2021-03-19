@@ -54,6 +54,46 @@ module.exports = {
         }))
     },
     create : (req,res) => {
-        
+        const {title,awards,rating,release_date,length} = req.body;
+        db.Pelicula.create({
+            title,
+            rating,
+            awards,
+            release_date,
+            length
+        })
+        .then(result => {
+            res.send(result)
+        })
+        .catch(error => {
+            switch (error.name) {
+                case "SequelizeValidationError":
+                    let erroresMsg = [];
+                    let erroresNotNull = [];
+                    let erroresValidation = [];
+                    error.errors.forEach(error => {
+                        erroresMsg.push(error.message)
+                        if (error.type == "notNull Violation") {
+                            erroresNotNull.push(error.message)
+                        }
+                        if (error.type == "Validation error") {
+                            erroresValidation.push(error.message)
+                        }
+                    });
+                    let response = {
+                        status: 400,
+                        messages: "datos faltantes o erróneos",
+                        errores: {
+                            cantidad: erroresMsg.length,
+                            msg: erroresMsg,
+                            notNull: erroresNotNull,
+                            validation: erroresValidation
+                        }
+                    }
+                    return res.status(400).json(response)
+                    default:
+                        return res.status(500).json({error})
+                }
+        })
     }
 }
