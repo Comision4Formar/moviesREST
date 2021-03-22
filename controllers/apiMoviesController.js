@@ -1,7 +1,7 @@
 const db = require('../database/models');
 
 const getUrl = (req) => req.protocol + '://' + req.get('host') + req.originalUrl;
-
+const getUrlBase  = (req) => req.protocol + '://' + req.get('host');
 
 module.exports = {
     getAll : (req,res) => {
@@ -38,7 +38,7 @@ module.exports = {
                     meta : {
                         status : 200,
                         link : getUrl(req),
-                        listado : req.protocol + '://' + req.get('host') + '/api/movies'
+                        listado : getUrlBase(req) + '/api/movies'
                     },
                     data : pelicula
                 })
@@ -63,8 +63,11 @@ module.exports = {
             length
         })
         .then(result => {
-            console.log(result)
-            res.send(result)
+            return res.status(200).json({
+                status : 200,
+                msg : 'La película fue registrada con éxito',
+                endpoint : getUrlBase(req) + '/api/movies/' + result.id
+            })
         })
         .catch(error => {
             console.log(error)
@@ -92,10 +95,11 @@ module.exports = {
                             validation: erroresValidation
                         }
                     }
-                    return res.status(400).json(error)
+                    return res.status(400).json(response)
                     default:
                         return res.status(500).json({error})
                 }
         })
-    }
+    },
+    update
 }

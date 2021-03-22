@@ -11,20 +11,51 @@ module.exports = (sequelize, dataTypes) => {
         },
         title : {
             type : dataTypes.STRING(500),
-            allowNull : false
+            allowNull : false,
+            validate : {
+                notNull : {
+                    msg : "El campo title no pude ser nulo"
+                },
+                notEmpty : {
+                    msg : 'Tenes que escribir el titulo de la película'
+                }
+            }
         },
         rating : {
             type : dataTypes.DECIMAL(3,1).UNSIGNED,
             allowNull : false,
+            validate : {
+                notNull : {
+                    msg : "El campo rating no pude ser nulo"
+                },
+                notEmpty : {
+                    msg : 'Tenes que escribir el rating de la película'
+                }
+            }
         },
         awards : {
             type : dataTypes.INTEGER.UNSIGNED,
             allowNull : false,
-            defaultValue : 0
+            validate : {
+                notNull : {
+                    msg : "El campo awards no pude ser nulo"
+                },
+                notEmpty : {
+                    msg : 'Tenes que escribir los premios'
+                }
+            }
         },
         release_date : {
             type : dataTypes.DATE,
-            allowNull : false
+            allowNull : false,
+            validate : {
+                notNull : {
+                    msg : "El campo release_date no pude ser nulo"
+                },
+                notEmpty : {
+                    msg : 'Tenes que escribir la fecha de estreno'
+                }
+            }
         },
         length : {
             type : dataTypes.INTEGER.UNSIGNED,
