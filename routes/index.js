@@ -25,6 +25,10 @@ router.get('/', function(req, res, next) {
           rating : 'decimal(3,1) UNSIGNED',
           release_date : 'date'
         }
+      },
+      update : {
+        endpoint : getUrl(req) + '/api/movies/update/{id}',
+        method : 'PUT'
       }
     }
   })

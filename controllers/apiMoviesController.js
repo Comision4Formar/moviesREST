@@ -63,8 +63,8 @@ module.exports = {
             length
         })
         .then(result => {
-            return res.status(200).json({
-                status : 200,
+            return res.status(201).json({
+                status : 201,
                 msg : 'La película fue registrada con éxito',
                 endpoint : getUrlBase(req) + '/api/movies/' + result.id
             })
@@ -101,5 +101,63 @@ module.exports = {
                 }
         })
     },
-    update
+    update :(req,res) => {
+        const {title,awards,rating,release_date,length} = req.body;
+
+        db.Pelicula.update({
+            title,
+            rating,
+            awards,
+            release_date,
+            length
+        },
+        {
+            where : {
+                id : req.params.id
+            }
+        })
+        .then(result => {
+            if(result[0]){
+                return res.status(201).json({
+                    meta : {
+                        state : 201,
+                        msg : 'Actualización exitosa'
+                    },
+                    data : {
+                        listado : getUrlBase(req) + '/api/movies/' + req.params.id
+                    }
+                })
+            }else{
+                return res.status(200).json({
+                    meta : {
+                        state : 200,
+                        msg : 'No se hicieron cambios'
+                    }
+                })
+            }
+        })
+    },
+    remove : (req,res) => {
+        db.Pelicula.destroy({
+            where : {
+                id : req.params.id
+            }
+        })
+        .then(result => {
+            if(result){
+                res.status(200).json({
+                    status : 200,
+                    msg : 'La pelicula fue borrada'
+                })
+            }else{
+                res.status(404).json({
+                    status : 404,
+                    msg : 'Pelicula no encontrada'
+                })
+            }
+        })
+        .catch(error => res.status(500).json({
+            error
+        }))
+    }
 }
