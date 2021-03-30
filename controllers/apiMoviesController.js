@@ -1,28 +1,56 @@
 const db = require('../database/models');
+const jwt = require('jsonwebtoken');
 
 const getUrl = (req) => req.protocol + '://' + req.get('host') + req.originalUrl;
 const getUrlBase  = (req) => req.protocol + '://' + req.get('host');
 
 module.exports = {
     getAll : (req,res) => {
-        db.Pelicula.findAll()
-        .then(peliculas => {
-            peliculas.forEach(pelicula => {
-                pelicula.setDataValue('link', getUrl(req) + '/' + pelicula.id)
-            });
-            let response = {
-                meta : {
-                    status : 200,
-                    cantidad : peliculas.length,
-                    link : getUrl(req)
-                },
-                data : peliculas
-            }
-            return res.status(200).json(response)
-        })
-        .catch(error => res.status(500).json({
-            error
-        }))
+        const token = req.headers['token']
+        if(!token){
+            return res.status(401).json({
+                auth:false,
+                msg : 'token no enviado...'
+            })
+        }
+
+        try {
+
+            const jwtDecode = jwt.verify(token,process.env.TOP_SECRET);
+            db.User.findByPk(jwtDecode.id)
+            .then(user => {
+                if(!user){
+                    return res.status(401).json({
+                        msg : "el usuario no existe"
+                    })
+                }else {
+                    db.Pelicula.findAll()
+                    .then(peliculas => {
+                        peliculas.forEach(pelicula => {
+                            pelicula.setDataValue('link', getUrl(req) + '/' + pelicula.id)
+                        });
+                        let response = {
+                            meta : {
+                                status : 200,
+                                cantidad : peliculas.length,
+                                link : getUrl(req)
+                            },
+                            data : peliculas
+                        }
+                        return res.status(200).json(response)
+                    })
+                    .catch(error => res.status(500).json({
+                        error
+                    }))
+                }
+            })
+            
+        } catch (error) {
+            return res.status(401).json({
+                msg : 'token inválido'
+            })
+        }
+       
     },
     getById : (req,res) => {
         if(req.params.id % 1 !== 0){
