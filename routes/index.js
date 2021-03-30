@@ -7,6 +7,14 @@ const getUrl = (req) => req.protocol + '://' + req.get('host');
 router.get('/', function(req, res, next) {
   res.status(200).json({
     title : 'apiMoviesREST',
+    register : {
+      endpoint : getUrl(req) + '/users/register',
+      method : 'POST'
+    },
+    login : {
+      endpoint : getUrl(req) + '/users/login',
+      method : 'POST'
+    },
     movies : {
       all : {
         endpoint : getUrl(req) + '/api/movies',

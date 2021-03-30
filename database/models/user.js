@@ -14,8 +14,33 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   User.init({
-    email: DataTypes.STRING,
-    pass: DataTypes.STRING
+    email: {
+      type :  DataTypes.STRING,
+      allowNull : false,
+      validate : {
+        notNull : {
+          msg : 'El campo no puede ser nulo'
+        },
+        notEmpty : {
+          msg : 'El campo email es obligatorio'
+        },
+        isEmail : {
+          msg : 'Debe ser un email válido'
+        }
+      }
+    },
+    pass: {
+      type :  DataTypes.STRING,
+      allowNull : false,
+      validate : {
+        notNull : {
+          msg : 'El campo no puede ser nulo'
+        },
+        notEmpty : {
+          msg : 'El campo contraseña es obligatorio'
+        }
+      }
+    }
   }, {
     sequelize,
     modelName: 'User',
